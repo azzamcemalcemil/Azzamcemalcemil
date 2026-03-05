@@ -251,7 +251,12 @@
     <section class="hero">
         <div class="main-logo-container"><img src="logo.jpg" onerror="this.src='https://via.placeholder.com/150'"></div>
         <h1>Azzam Cemal-Cemil<br><span>Lapar?? Delivery order aja yuk....</span> 🤤</h1>
-        <p class="hero-desc">Sajian istimewa yang dibuat dengan bahan pilihan & cinta.</p>
+        
+        <div style="background: #fff3f0; color: var(--accent); display: inline-block; padding: 5px 15px; border-radius: 50px; font-size: 11px; font-weight: 800; border: 1.5px solid var(--accent); margin-top: 10px; animation: pulse 2s infinite;">
+            <i class="fas fa-calendar-check"></i> HANYA MELAYANI SISTEM PRE-ORDER
+        </div>
+
+        <p class="hero-desc">"Maaf ya, untuk saat ini kami hanya menerima preorder saja. Sajian istimewa yang dibuat dengan bahan pilihan & cinta."</p>
     </section>
 
     <div class="search-section">
@@ -317,9 +322,10 @@
 
     <div class="disclaimer-container">
         <i class="fas fa-clipboard-check"></i>
+        <p>•Maaf untuk saat ini kami hanya menerima Pre Order</p>
         <p>•Selain pelanggan tetap kami, Wajib melakukan Pembayaran terlebih dahulu sebelum pesanan diproses</p>
         <p>•Menu yang tersedia di catalog hanya contoh kemudahan pemesanan , untuk ketersediaan akan dikonfirmasi di WA</p>
-        <p>•Kami menjamin kebersihan & kehalalan setiap sajian.</p>
+        <p>•Kami menjamin kehalalan setiap menu.</p>
         <p>•Pastikan alamat pengiriman sesuai agar kurir tidak nyasar.</p>
     </div>
 
@@ -477,7 +483,7 @@ function filterMenu(c, b) {
         document.getElementById('cart-total').innerText = formatRp(totalFinal);
     }
 
-    function checkoutWA() {
+            function checkoutWA() {
         const shipVal = parseInt(document.getElementById('shipping-method').value) || 0;
         const shipText = document.getElementById('shipping-method').options[document.getElementById('shipping-method').selectedIndex].text;
         const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
@@ -485,9 +491,15 @@ function filterMenu(c, b) {
         let diskonText = subtotal >= MIN_BELANJA_DISKON ? `\n🎁 Diskon: -${formatRp(NOMINAL_DISKON)}` : "";
         const totalAkhir = (subtotal + shipVal) - (subtotal >= MIN_BELANJA_DISKON ? NOMINAL_DISKON : 0);
         const daftarPesanan = cart.map(m => `🍽️ *${m.name}*\n    ${m.qty} x ${formatRp(m.price)} = *${formatRp(m.price * m.qty)}*`).join('\n\n');
-        const pesan = `*HALO Bunda Azzam ! SAYA MAU PESAN* 😋\n----------------------------------\n${daftarPesanan}\n----------------------------------\n${userNote !== "" ? `📝 *CATATAN:* ${userNote}\n` : ""}Subtotal: ${formatRp(subtotal)}\nKurir: ${shipText}${diskonText}\n*TOTAL BAYAR: ${formatRp(totalAkhir)}*\n----------------------------------\n_Mohon Di Konfirmasi ya kak !_`;
+        
+        // Pesan tambahan Pre-order
+        const infoPreorder = `\n⚠️ *INFO:* Maaf ya, untuk saat ini kami hanya menerima preorder saja.\n`;
+
+        const pesan = `*HALO Bunda Azzam ! SAYA MAU PESAN* 😋\n----------------------------------\n${daftarPesanan}\n----------------------------------\n${infoPreorder}${userNote !== "" ? `📝 *CATATAN:* ${userNote}\n` : ""}Subtotal: ${formatRp(subtotal)}\nKurir: ${shipText}${diskonText}\n*TOTAL BAYAR: ${formatRp(totalAkhir)}*\n----------------------------------\n_Mohon Di Konfirmasi ya kak !_`;
+        
         window.open(`https://wa.me/${CONFIG.WA_PHONE}?text=${encodeURIComponent(pesan)}`, '_blank');
     }
+
 
     function checkStatus(ms) {
         const now = new Date(); const h = now.getHours();
