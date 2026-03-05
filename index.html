@@ -224,6 +224,30 @@
         <div class="nav-right-icon"><i class="fas fa-utensils"></i></div>
     </nav>
 
+    <div class="cart-bar" id="cart-bar">
+        <div id="discount-notice" class="discount-notice notice-off">Belanja Rp 100rb dapet diskon!</div>
+        
+        <div style="display: flex; gap: 10px; margin: 5px 0;">
+            <input type="text" id="order-note" class="note-input" placeholder="Contoh: Pedas ya bun, Kirim jam 4...">
+            <select id="shipping-method" class="shipping-select" onchange="updateCartUI()">
+                <option value="0">Ambil Sendiri (Rp 0)</option>
+                <option value="5000">Jarak 1KM (Rp 5.000)</option>
+                <option value="10000">Jarak +1KM (Rp 10.000)</option>
+            </select>
+        </div>
+
+        <div class="cart-footer">
+            <div>
+                <h4 id="cart-count" style="color:var(--primary); margin:0; font-size: 12px;">0 Item</h4>
+                <div id="cart-total" style="color:var(--accent); font-weight:800; font-size: 18px;">Rp 0</div>
+            </div>
+            <button class="checkout-btn" onclick="checkoutWA()">
+                <i class="fab fa-whatsapp"></i> Pesan Sekarang
+            </button>
+        </div>
+    </div>
+
+
     <section class="hero">
         <div class="main-logo-container"><img src="logo.jpg" onerror="this.src='https://via.placeholder.com/150'"></div>
         <h1>Azzam Cemal-Cemil<br><span>Lapar?? Delivery order aja yuk....</span> 🤤</h1>
@@ -247,15 +271,18 @@
         <p style="font-size: 11px; color: #111; font-weight: 700;">Senin - Sabtu (08.00 - 20.00)</p>
     </div>
 
-    <div class="filter-tabs">
+        <div class="filter-tabs">
         <button class="tab-btn active" id="btn-promo" onclick="filterMenu('promo', this)">🔥 Promo Spesial</button>
         <button class="tab-btn" onclick="filterMenu('makanan', this)"> 🍱 Menu Utama</button>
         <button class="tab-btn" onclick="filterMenu('jajanan', this)"> 🍿 Snack </button>
         <button class="tab-btn" onclick="filterMenu('kue', this)"> 🍰 Aneka Kue</button>
         <button class="tab-btn" onclick="filterMenu('minuman', this)"> 🍹 Minuman</button>
         <button class="tab-btn" onclick="filterMenu('lain-lain', this)"> 📦 Lain-Lain</button>
+        <button class="tab-btn" id="btn-semua" onclick="filterMenu('semua', this)">📋 Semua Menu</button>
     </div>
 
+
+    
     <div id="loading-text" style="text-align: center; padding: 40px; color: #888;"><b><i class="fas fa-spinner fa-spin"></i> Meracik Menu...</b></div>
     <div class="menu-grid" id="menu-list"></div>
 
@@ -344,6 +371,44 @@ function filterMenu(c, b) {
     document.getElementById('menu-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+    function initPromo(data) {
+        // Filter item yang punya promo_img
+        const promoItems = data.filter(i => i.promo_img && i.promo_img.trim() !== "");
+        if (promoItems.length === 0) return;
+
+        const slider = document.getElementById('promoSlides');
+        const dotsCont = document.getElementById('slideDots');
+        document.getElementById('promo-container').style.display = 'block';
+        
+        slider.innerHTML = ""; 
+        dotsCont.innerHTML = "";
+
+        promoItems.forEach((item, i) => {
+            slider.innerHTML += `
+                <div class="slide">
+                    ${(item.promo) ? `<div class="promo-tag-slider">${item.promo}</div>` : ""}
+                    <img src="${item.promo_img}" alt="Promo">
+                </div>`;
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (i === 0) dot.classList.add('active');
+            dotsCont.appendChild(dot);
+        });
+
+        let cur = 0;
+        // Bersihkan interval lama jika ada (mencegah double speed)
+        if(window.promoTimer) clearInterval(window.promoTimer);
+        
+        window.promoTimer = setInterval(() => {
+            const slides = document.querySelectorAll('.slide');
+            if(slides.length <= 1) return; 
+            cur = (cur + 1) % slides.length;
+            slider.style.transform = `translateX(-${cur * 100}%)`;
+            const d = document.querySelectorAll('.dot');
+            d.forEach(x => x.classList.remove('active'));
+            if(d[cur]) d[cur].classList.add('active');
+        }, 5000);
+    }
 
     function searchMenu() {
         const query = document.getElementById('menuSearch').value.toLowerCase();
@@ -455,4 +520,3 @@ function filterMenu(c, b) {
 </script>
 </body>
 </html>
-
